@@ -35,15 +35,15 @@ the main scripts in this project are
 
 ### RunProject
 
-[airflow](): contains the dags and operators needed to run our etl pipeline
+[airflow](https://github.com/Kondwani7/Udacity-DataEngineering-Projects/tree/main/4_data_pipelines/airflow): contains the dags and operators needed to run our etl pipeline
 
-[dags](): within our airflow folder, it contains the dag needed to orchestrate the pipeline
+[dags](https://github.com/Kondwani7/Udacity-DataEngineering-Projects/tree/main/4_data_pipelines/airflow/dags): within our airflow folder, it contains the dag needed to orchestrate the pipeline
 
-[operators](): within the plugins, it contains the custom operators built to save time writitng scripts to run our dag
+[operators](https://github.com/Kondwani7/Udacity-DataEngineering-Projects/tree/main/4_data_pipelines/airflow/plugins/operators): within the plugins, it contains the custom operators built to save time writitng scripts to run our dag
 
 ## TargetPipeline
 
-![Interface](https://web.blockbench.net/content/front_page_app.png)
+![Interface](https://github.com/Kondwani7/Udacity-DataEngineering-Projects/blob/main/4_data_pipelines/image/project_pipeline.PNG)
 
 ## DatasetSource
 The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.
