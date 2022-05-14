@@ -4,9 +4,10 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+from pyspark.sql.types import TimestampType
 
 config = configparser.ConfigParser()
-config.read('dl.cfg')
+config.read("dl.cfg")
 
 os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
 os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
@@ -20,9 +21,21 @@ def create_spark_session():
 
 
 def process_song_data(spark, input_data, output_data):
+    """
+    Process Song data
+
+    this function will process the input_data from the song_data folder,
+    Extract and insert the input_data in parquet format (output_data) to our sql tables
+    Args;
+        - spark; gets our spark session and reads the data (which is in json format)
+        - input_data: the filepath to our target directory from a S3 bucket
+        - output_data: the target data inserted in our tables
+    Returns:
+        None
+    """
     print("getting song data")
     # get filepath to song data file
-    song_data =  os.path.join(input_data,"song_data/*/*/*/*.json")
+     song_data = os.path.join(input_data,"song_data/*/*/*/*")
     # read song data file
     df =  spark.read.json(song_data)
     # extract columns to create songs table
@@ -39,6 +52,18 @@ def process_song_data(spark, input_data, output_data):
     print("artist parquet done")
 
 def process_log_data(spark, input_data, output_data):
+    """
+    Process log data
+
+    this function will process the input_data from the log_data folder,
+    Extract and insert the input_data in parquet format (output_data) to our sql tables
+    Args;
+        - spark; gets our spark session and reads the data (which is in json format)
+        - input_data: the filepath to our target directory from a S3 bucket
+        - output_data: the target data inserted in our tables
+    Returns:
+        None
+    """
     print("getting log data")
     # get filepath to log data file
     log_data = os.path.join(input_data,"log_data/")
@@ -85,6 +110,13 @@ def process_log_data(spark, input_data, output_data):
     print("songplays parquet done")
 
 def main():
+    """
+    Runs all the functions in our script
+    it runs the process_song_data and process_log_data
+    it takes our spark created session,
+    input data from our s3 bucket
+    and output_data, which is the target fact and dimension tables created in our processing fuctions
+    """
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
     output_data = ""
