@@ -1,31 +1,32 @@
 import configparser
 import psycopg2
-from sql_queries import copy_table_queries, insert_table_queries
+from sql_queries import create_table_queries, drop_table_queries
 
 
-def load_staging_tables(cur, conn):
+def drop_tables(cur, conn):
     """
-    this copies our in redshift log_data to our staging events and staging songs tables
-    its subject to authetication from redshift based on our IAM Role
+    drop tables our sqltables based on based on the scripts in sql_queries.py
+    it allows us to reset our tables every time we run the "python create_tables.py" script
     Args:
         - cur is used to to execute our sql query
         - conn is used to commit the changes to our sql tables:
-        - in this case  copy log data in redshift to staging events and staging song tables
+        - in this case dropping the tables
     """
-    for query in copy_table_queries:
+    for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
 
-def insert_tables(cur, conn):
+def create_tables(cur, conn):
     """
-    this inserts data into our fact and dimensions tables
+    this creates tables our sqltables based on the scripts in sql_queries.py 
+    it creates our tables and inserts data every time we run our "python create_tables.py" script
     Args:
         - cur is used to to execute our sql query
         - conn is used to commit the changes to our sql tables:
-        - in this case insert data into our fact and dimensions tables
+        - in this case creating and inserting in our the tables
     """
-    for query in insert_table_queries:
+    for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
@@ -33,20 +34,20 @@ def insert_tables(cur, conn):
 def main():
     """
     it autheticates access to redshift  best on the credentials in our "dwh.cfg" file
-    it allows us to complete our etl pipeline by committing the fact dimension tables to redshift
+    it allows us to create postgres tables in redshift
     Args:
         - cur is used to to execute our sql query
         - conn is used to commit the changes to our sql tables:
-        - in this case copy log data to our staging tables and insert data to our fact and dimension tables
+        - in this case  create, insert and drop (when needed) tables in redshift
     """
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
     conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
     cur = conn.cursor()
-    
-    load_staging_tables(cur, conn)
-    insert_tables(cur, conn)
+
+    drop_tables(cur, conn)
+    create_tables(cur, conn)
 
     conn.close()
 
