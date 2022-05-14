@@ -69,7 +69,7 @@ def process_log_data(spark, input_data, output_data):
     log_data = os.path.join(input_data,"log_data/")
 
     # read log data file
-    df = spark_read.json(log_data)
+    df = spark.read.json(log_data)
     
     # filter by actions for song plays
     df= df.where(col("page")=="NextSong")
