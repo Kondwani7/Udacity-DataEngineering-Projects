@@ -6,7 +6,16 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
-    # open song file
+    """
+    Description:
+        - Insert into our song and artist dimension tables
+        - insert data from our directory to the song and artist tables
+    Args:
+        - cur: runs the sql queries
+        - filepath: path to the directory containing our target data
+    Returns:
+        None
+    """
     df =   df = pd.read_json(filepath, lines=True)
 
     # insert song record
@@ -19,6 +28,20 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+    Description:
+        - Insert into our time, user dimension tables and songplays fact table
+        - to get all the data we filter the page column by "NextSong"
+        - we convert our timestamp into a datetime datatype then insert in our time table
+        - we insert into our user table
+        - we set a condition to accept null("None") values in the songId and artistId columns of the songplays table
+        - we insert into our songplays table
+    Args:
+        - cur: runs the sql queries
+        - filepath: path to the directory containing our target data
+    Returns:
+        None
+    """
     df = pd.read_json(filepath, lines=True)
 
     # filter by NextSong action
@@ -55,12 +78,26 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = [pd.to_datetime(row.ts, unit="ms"), row.userId, row.level, songid, artistid, row.sessionId, row.location, row.userAgent]
+        songplay_data =  (row.ts, row.userId, row.level, songid, artistid, row.itemInSession, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
 def process_data(cur, conn, filepath, func):
-    # get all files matching extension from directory
+    """
+    Description:
+        - listing the files in a directory,
+        - Then execute ingest process for each file in each sql fact and dimensions tables
+        - Then saves it to our database
+
+    Arguments:
+        - cur: the cursor runs our sql queries.
+        - conn: connects to our database and commits our cur queries
+        - filepath: the path to the directory for our target data: log_data and/or song_data.
+        - func: function that transforms the data and inserts it into the database.
+
+    Returns:
+        None
+    """
     all_files = []
     for root, dirs, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
@@ -79,6 +116,14 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+    Description:
+        - connects to our database
+        - performs the ingestion queries from our song_data and log data file paths to sql tables
+        - saves and closes the database connection
+    Returns:
+        - None
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
