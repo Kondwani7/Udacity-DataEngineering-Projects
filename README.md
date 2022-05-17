@@ -36,6 +36,5 @@ build an ETL pipeline that extracts their data from S3, processes them using Spa
 - [Project Link](https://github.com/Kondwani7/Udacity-DataEngineering-Projects/tree/main/4_data_pipelines)
 
 ## CapstoneProject
-### Project introduction
 ### Objective
 Transform Amazon bestsellers and reviews data to predict how reviews determine a sellers store performance. [Project Link](https://github.com/Kondwani7/Udacity-DataEngineering-Projects/tree/main/5_capstone_project)
