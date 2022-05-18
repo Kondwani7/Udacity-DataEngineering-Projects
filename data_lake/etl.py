@@ -2,8 +2,8 @@ import configparser
 from datetime import datetime
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col
-from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+from pyspark.sql.functions import udf, col, monotonically_increasing_id
+from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear,dayofweek
 from pyspark.sql.types import TimestampType
 
 config = configparser.ConfigParser()
@@ -35,9 +35,12 @@ def process_song_data(spark, input_data, output_data):
     """
     print("getting song data")
     # get filepath to song data file
-     song_data = os.path.join(input_data,"song_data/*/*/*/*")
+    song_data = os.path.join(input_data,"song_data/*/*/*/*.json")
     # read song data file
-    df =  spark.read.json(song_data)
+    #adding a permissive mode allows to spark to highlight & separate corrupt datatypes from our json data
+    #the column with corrupt records is called "corrupt_records"
+    #further we drop duplicates to ensure we don't ingest conflicting information of the same user or artist
+    df =  spark.read.json(song_data, mode='PERMISSIVE', columnNameOfCorruptRecord='corrupt_records').drop_duplicates()
     # extract columns to create songs table
     songs_table =  df['song_id', 'title', 'artist_id','artist_name', 'year', 'duration']
     songs_table = songs_table.drop_duplicates(subset=['song_id'])
