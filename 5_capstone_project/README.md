@@ -21,8 +21,9 @@ We want to build a ETL pipeline that takes data from kaggle that was uploaded to
 the main scripts in this project are
 - udacity_capstone: It contains the scripts used to create the entire ETL pipeline
 - config_write: contains the script used to set your AWS credentials 
-- AWS_local_creds : It contains your access and key secret key provided for your IAM user. when creating the IAM user on AWS, attach the "AmazonS3FullAcess" policy to have complete control over reading and writing to S3 buckets. 
-
+- AWS_local_creds : It contains your access and key secret key provided for your IAM user. when creating the IAM user on AWS, attach the "AmazonS3FullAcess" policy to have complete control over reading and writing to S3 buckets.
+### Cloud Service Change
+- Note that due to high data transfer costs  on s3, the data was uploaded,accessed, finally saved from google drive after converting it to a fact and dimensions tables
 
 
 ## Datasets
